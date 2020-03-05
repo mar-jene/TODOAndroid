@@ -1,9 +1,18 @@
 package org.udg.pds.todoandroid.activity;
 
+<<<<<<< Updated upstream
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.Snackbar;
+=======
+import android.content.Intent;
+import android.os.Bundle;
+import android.support.design.widget.FloatingActionButton;
+import android.support.design.widget.Snackbar;
+import android.view.View;
+import android.support.design.widget.NavigationView;
+>>>>>>> Stashed changes
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
@@ -11,25 +20,41 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+<<<<<<< Updated upstream
 import android.view.View;
+=======
+import android.widget.Toast;
+>>>>>>> Stashed changes
 
 import org.udg.pds.todoandroid.R;
 
 public class NavDrawerActivity extends AppCompatActivity
+<<<<<<< Updated upstream
     implements NavigationView.OnNavigationItemSelectedListener {
+=======
+        implements NavigationView.OnNavigationItemSelectedListener {
+>>>>>>> Stashed changes
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_nd);
+<<<<<<< Updated upstream
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
         FloatingActionButton fab = findViewById(R.id.fab);
+=======
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+
+        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
+>>>>>>> Stashed changes
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
+<<<<<<< Updated upstream
                     .setAction("Action", null).show();
             }
         });
@@ -41,12 +66,35 @@ public class NavDrawerActivity extends AppCompatActivity
         toggle.syncState();
 
         NavigationView navigationView = findViewById(R.id.nav_view);
+=======
+                        .setAction("Action", new View.OnClickListener(){
+                            @Override
+                            public void onClick(View view){
+                                Intent i = new Intent(NavDrawerActivity.this, TestActivity.class);
+                                startActivity(i);
+                            }
+                        }).show();
+            }
+        });
+
+        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
+                this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
+        drawer.setDrawerListener(toggle);
+        toggle.syncState();
+
+        NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
+>>>>>>> Stashed changes
         navigationView.setNavigationItemSelectedListener(this);
     }
 
     @Override
     public void onBackPressed() {
+<<<<<<< Updated upstream
         DrawerLayout drawer = findViewById(R.id.drawer_layout);
+=======
+        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+>>>>>>> Stashed changes
         if (drawer.isDrawerOpen(GravityCompat.START)) {
             drawer.closeDrawer(GravityCompat.START);
         } else {
@@ -96,7 +144,11 @@ public class NavDrawerActivity extends AppCompatActivity
 
         }
 
+<<<<<<< Updated upstream
         DrawerLayout drawer = findViewById(R.id.drawer_layout);
+=======
+        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+>>>>>>> Stashed changes
         drawer.closeDrawer(GravityCompat.START);
         return true;
     }
