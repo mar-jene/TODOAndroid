@@ -1,9 +1,10 @@
 package org.udg.pds.todoandroid.fragment;
 
-import android.app.Fragment;
+//import android.app.Fragment;
+
 import android.content.Context;
-import android.content.Intent;
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -11,20 +12,18 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
-import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import org.udg.pds.todoandroid.R;
 import org.udg.pds.todoandroid.TodoApp;
-import org.udg.pds.todoandroid.activity.AddTask;
-import org.udg.pds.todoandroid.entity.Task;
+import org.udg.pds.todoandroid.entity.Group;
 import org.udg.pds.todoandroid.rest.TodoApi;
-import org.udg.pds.todoandroid.util.Global;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import android.util.Log;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -32,18 +31,20 @@ import retrofit2.Response;
 /**
  * Created by imartin on 12/02/16.
  */
-public class TaskList extends Fragment {
+public class OwnedGroupsFragment extends Fragment {
 
     TodoApi mTodoService;
 
     RecyclerView mRecyclerView;
-    private TRAdapter mAdapter;
+    private OWAdapter mAdapter;
+    public OwnedGroupsFragment() {}
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        return inflater.inflate(R.layout.task_list, container, false);
+
+        return inflater.inflate(R.layout.fragment_owned_grups, container, false);
     }
 
     @Override
@@ -52,101 +53,90 @@ public class TaskList extends Fragment {
         super.onStart();
         mTodoService = ((TodoApp) this.getActivity().getApplication()).getAPI();
 
-        mRecyclerView = getView().findViewById(R.id.task_recyclerview);
-        mAdapter = new TRAdapter(this.getActivity().getApplication());
-        mRecyclerView.setAdapter(mAdapter);
+        mRecyclerView = getView().findViewById(R.id.ownGroups_rv);
+        mAdapter = new OWAdapter(this.getActivity().getApplication());
         mRecyclerView.setLayoutManager(new LinearLayoutManager(this.getActivity()));
+        mRecyclerView.setAdapter(mAdapter);
 
-        Button b = getView().findViewById(R.id.b_add_task_rv);
-        // This is the listener to the "Add Task" button
-        b.setOnClickListener(view -> {
-            // When we press the "Add Task" button, the AddTask activity is called, where
-            // we can introduce the data of the new task
-            Intent i = new Intent(TaskList.this.getContext(), AddTask.class);
-            // We launch the activity with startActivityForResult because we want to know when
-            // the launched activity has finished. In this case, when the AddTask activity has finished
-            // we will update the list to show the new task.
-            startActivityForResult(i, Global.RQ_ADD_TASK);
-        });
     }
 
     @Override
     public void onResume() {
         super.onResume();
-        this.updateTaskList();
+        Log.d("onResume ", "entroo?");
+        this.updateGroupList();
     }
 
-    public void showTaskList(List<Task> tl) {
+    public void showGroupList(List<Group> gl) {
         System.out.println("///////deokdoajdsoajdosajdosa////");
         mAdapter.clear();
-        for (Task t : tl) {
-            mAdapter.add(t);
+        for (Group g : gl) {
+            Log.d("afegeixo?", g.name);
+            mAdapter.add(g);
         }
     }
 
-    @Override
-    public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (requestCode == Global.RQ_ADD_TASK) {
-            this.updateTaskList();
-        }
-    }
 
-    public void updateTaskList() {
-
-        Call<List<Task>> call = mTodoService.getTasks();
-
-        call.enqueue(new Callback<List<Task>>() {
+    public void updateGroupList() {
+        Log.d("UpdateGroup ", "entroo aqu?");
+        Call<List<Group>> call = mTodoService.getOwnedGroups();
+        call.enqueue(new Callback<List<Group>>() {
             @Override
-            public void onResponse(Call<List<Task>> call, Response<List<Task>> response) {
+            public void onResponse(Call<List<Group>> call, Response<List<Group>> response) {
                 if (response.isSuccessful()) {
-                    System.out.println("aqui si que entroooo?????");
-                    TaskList.this.showTaskList(response.body());
+                    Log.d("eeeeeeeeeooooo", "res" +((response.body()).size()));
+                    System.out.println("Grouppsssssss       aqui si que entroooo?????");
+                    OwnedGroupsFragment.this.showGroupList(response.body());
                 } else {
-                    Toast.makeText(TaskList.this.getContext(), "Error reading tasks", Toast.LENGTH_LONG).show();
+                    Log.d("OnResponse", "else ");
+                    Toast.makeText(OwnedGroupsFragment.this.getContext(), "Error reading groups", Toast.LENGTH_LONG).show();
                 }
             }
 
             @Override
-            public void onFailure(Call<List<Task>> call, Throwable t) {
-
+            public void onFailure(Call<List<Group>> call, Throwable t) {
+                Log.d("oonFailure", t.getMessage());
             }
         });
     }
 
-    static class TaskViewHolder extends RecyclerView.ViewHolder {
+    static class GroupViewHolder extends RecyclerView.ViewHolder {
+        TextView name;
         TextView description;
-        TextView dateLimit;
         View view;
 
-        TaskViewHolder(View itemView) {
+        GroupViewHolder(View itemView) {
             super(itemView);
             view = itemView;
             description = itemView.findViewById(R.id.itemDescription);
-            dateLimit = itemView.findViewById(R.id.itemDateLimit);
+            name = itemView.findViewById(R.id.itemName);
+            Log.d("constrictor viewHolder ", description.toString());
         }
     }
 
-    static class TRAdapter extends RecyclerView.Adapter<TaskList.TaskViewHolder> {
+    static class OWAdapter extends RecyclerView.Adapter<OwnedGroupsFragment.GroupViewHolder> {
 
-        List<Task> list = new ArrayList<>();
+        List<Group> list = new ArrayList<>();
         Context context;
 
-        public TRAdapter(Context context) {
+        public OWAdapter(Context context) {
             this.context = context;
         }
 
         @Override
-        public TaskList.TaskViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-            View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.task_layout, parent, false);
-            TaskList.TaskViewHolder holder = new TaskList.TaskViewHolder(v);
+        public OwnedGroupsFragment.GroupViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+            View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.group_layout, parent, false);
+            Log.d("OncreateViewHolder ", "da! "+R.layout.group_layout);
+            OwnedGroupsFragment.GroupViewHolder holder = new OwnedGroupsFragment.GroupViewHolder(v);
 
             return holder;
         }
 
         @Override
-        public void onBindViewHolder(TaskList.TaskViewHolder holder, final int position) {
-            holder.description.setText(list.get(position).text);
-            holder.dateLimit.setText(list.get(position).dateLimit.toString());
+        public void onBindViewHolder(OwnedGroupsFragment.GroupViewHolder holder, final int position) {
+            holder.description.setText(list.get(position).description);
+            holder.name.setText(list.get(position).name);
+            Log.d("onbind", "name "+ list.get(position).name);
 
             holder.view.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -158,7 +148,7 @@ public class TaskList extends Fragment {
                 }
             });
 
-            holder.dateLimit.setOnClickListener(new View.OnClickListener() {
+            holder.name.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
                     int duration = Toast.LENGTH_LONG;
@@ -183,13 +173,13 @@ public class TaskList extends Fragment {
         }
 
         // Insert a new item to the RecyclerView
-        public void insert(int position, Task data) {
+        public void insert(int position, Group data) {
             list.add(position, data);
             notifyItemInserted(position);
         }
 
         // Remove a RecyclerView item containing the Data object
-        public void remove(Task data) {
+        public void remove(Group data) {
             int position = list.indexOf(data);
             list.remove(position);
             notifyItemRemoved(position);
@@ -200,8 +190,9 @@ public class TaskList extends Fragment {
             viewHolder.itemView.setAnimation(animAnticipateOvershoot);
         }
 
-        public void add(Task t) {
+        public void add(Group t) {
             list.add(t);
+            Log.d("dins un add", t.name);
             this.notifyItemInserted(list.size() - 1);
         }
 

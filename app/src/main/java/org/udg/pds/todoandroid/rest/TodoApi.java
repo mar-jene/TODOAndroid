@@ -1,5 +1,6 @@
 package org.udg.pds.todoandroid.rest;
 
+import org.udg.pds.todoandroid.entity.Group;
 import org.udg.pds.todoandroid.entity.IdObject;
 import org.udg.pds.todoandroid.entity.Task;
 import org.udg.pds.todoandroid.entity.User;
@@ -31,6 +32,9 @@ public interface TodoApi {
 
     @GET("/tasks/{id}")
     Call<Task> getTask(@Path("id") String id);
+
+    @GET("/me/groups")
+    Call<List<Group>> getOwnedGroups();
 
 }
 

@@ -8,6 +8,7 @@ import android.widget.FrameLayout;
 import org.udg.pds.todoandroid.R;
 import org.udg.pds.todoandroid.TodoApp;
 import org.udg.pds.todoandroid.fragment.FavoritesFragment;
+import org.udg.pds.todoandroid.fragment.SchedulesFragment;
 import org.udg.pds.todoandroid.fragment.TaskList;
 import org.udg.pds.todoandroid.rest.TodoApi;
 
@@ -49,7 +50,10 @@ public class NavigationActivity extends AppCompatActivity {
                 break;
             case R.id.action_schedules:
                 content.removeAllViews();
-                getLayoutInflater().inflate(R.layout.content_schedules, content);
+                getSupportFragmentManager()
+                    .beginTransaction()
+                    .replace(R.id.main_content, new SchedulesFragment())
+                    .commit();
                 break;
             case R.id.action_tasks:
                 content.removeAllViews();
